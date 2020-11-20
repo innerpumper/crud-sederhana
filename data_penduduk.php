@@ -17,10 +17,16 @@
       if (isset(($_GET['status']))) {
         if($_GET['status']=='berhasil') {
           Echo "Data Berhasil Dihapus";
-        }else {
-          echo "data gagal dihapus";
-        }
+
+
+        }elseif($_GET['status']=='edited') {
+          echo "Data berhasil diedit";
+        
+      }else {
+        echo "data gagal dihapus";
       }
+    }
+    
       
     ?>
     </p>
