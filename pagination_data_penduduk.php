@@ -38,9 +38,9 @@
 
 
     <br>
-    <form action="data_penduduk.php" method="post">
+    <form action="cari.php" method="post">
     <input type="text" name="search" size="50" autocomplete="off" placeholder="Cari data penduduk......">
-    <button type="submit" name="cari">Cari Data</button>
+    <button type="submit" name="submitcari">Cari Data</button>
     </form>
     <table border="2">
       <thead>
@@ -56,13 +56,21 @@
     
 
   <tbody border="1">
+  <?php 
+  
+  
+  
+  $page = isset($_GET['halaman']) ?(int) $_GET['halaman'] : 1;
+  $tampil = 2;
+  $mulaitampil = ($page - 1) * $tampil;
 
-  <?php
-  if(!isset($_POST['cari'])) {
-    $query = "SELECT * FROM data_penduduk";
-    $data  = mysqli_query($database, $query);
+    $data = "SELECT * FROM data_penduduk limit $mulaitampil,$tampil";
+    $data_baru = mysqli_query($database, "SELECT * From data_penduduk");
+    $get_data = mysqli_query($database, $data);
+    $jumlah_page = mysqli_num_rows($data_baru);
+    $halamanakhir = ceil($jumlah_page/$tampil);
     $i=1;
-    while($penduduk = mysqli_fetch_array($data)) {
+    while($penduduk = mysqli_fetch_array($get_data)) {
         
             echo "<tr>";
 
@@ -80,48 +88,32 @@
 
         echo "</tr>";
  
-    ?> <?php }
+    }
 
-    ?>
-
-    <?php
-  }else {
-    $cari = $_POST['search'];
-    $query2 = "SELECT * FROM data_penduduk  where
-    nama LIKE '%$cari%' OR
-    alamat LIKE '$$cari%' OR
-    ttl LIKE '%$cari%' OR
-    status LIKE '%$cari%'";
-
-    $data2 = mysqli_query($database,$query2);
-    $i=1;
-    while($penduduk = mysqli_fetch_array($data2)) {
-        
-            echo "<tr>";
-
-
-        echo "<td>".$i++."</td>";       
-        echo "<td>".$penduduk['nama']."</td>";
-        echo "<td>".$penduduk['alamat']."</td>";
-        echo "<td>".$penduduk['ttl']."</td>";
-        echo "<td>".$penduduk['status']."</td>";
-
-        echo "<td>";
-        echo "<a href='edit_data.php?id=".$penduduk['id']."'>edit</a> | ";
-        echo "<a href='hapus_data.php?id=".$penduduk['id']."'>hapus</a>";
-        echo "</td>";
-
-        echo "</tr>"; }
-
-  } ?>
-    
-
- 
+  ?>
   </tbody>
   </table>
 
-<p>Total : <?php echo mysqli_num_rows($data2) ?></p>
-
-  
+  <p>Total : <?php echo mysqli_num_rows($get_data) ?>
+  <nav>
+    <ul>
+    <?php if($page>1) {
+      $previous = $page -1;
+      ?>
+    <li><a href="?halaman=<?php echo $previous ?>"> Sebelumnya</a></li>
+    <?php }?>
+    <li>
+    <p>Ini Halaman <?php echo $page ?></p>
+    </li>
+    <?php if($page < $halamanakhir)  {
+      $next = $page +1;
+      ?>
+    <li>
+    <a href="?halaman=<?php echo $next ?>">>>lanjut halaman</a>
+    
+    <?php } ?>
+    </ul>
+  </nav>
+  </p>
 </body>
 </html>
